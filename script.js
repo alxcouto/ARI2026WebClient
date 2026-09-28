@@ -124,8 +124,8 @@
     // ==============================================================================
     // 3. UI Element References
     // ==============================================================================
-    const autoplayBanner = document.getElementById('autoplay-banner');
-    const btnUnmuteAutoplay = document.getElementById('btn-unmute-autoplay');
+    const unmuteOverlay = document.getElementById('unmute-overlay');
+    const btnUnmuteOverlay = document.getElementById('btn-unmute-overlay');
 
     const btnCustomPlay = document.getElementById('btn-custom-play');
     const btnCustomMute = document.getElementById('btn-custom-mute');
@@ -272,14 +272,16 @@
         // Start timecode sync ticker (200ms)
         startSubtitleSyncTicker();
 
-        // Autoplay check
+        // Autoplay check & Option C Unmute Overlay
         try {
             player.playVideo();
             setTimeout(() => {
                 if (player && typeof player.isMuted === 'function' && player.isMuted()) {
-                    if (autoplayBanner) autoplayBanner.classList.remove('hidden');
+                    if (unmuteOverlay) unmuteOverlay.classList.remove('faded');
+                } else {
+                    if (unmuteOverlay) unmuteOverlay.classList.add('faded');
                 }
-            }, 1000);
+            }, 800);
         } catch (err) {}
     }
 
@@ -304,17 +306,45 @@
         console.warn('[YouTube Player Error]:', event.data);
     }
 
-    // Audio Autoplay Unlocker
-    if (btnUnmuteAutoplay) {
-        btnUnmuteAutoplay.addEventListener('click', () => {
-            if (player && typeof player.unMute === 'function') {
-                player.unMute();
-                player.setVolume(100);
-                if (btnCustomMute) btnCustomMute.textContent = '🔊 MUTE';
-                if (inputCustomVolume) inputCustomVolume.value = 100;
-                emitAnalytics('unmute', getPlayerSnapshot());
+    // Option C Central Unmute Trigger
+    function triggerUnmute() {
+        if (player && typeof player.unMute === 'function') {
+            player.unMute();
+            player.setVolume(100);
+            if (btnCustomMute) btnCustomMute.textContent = '🔊 MUTE';
+            if (inputCustomVolume) inputCustomVolume.value = 100;
+            emitAnalytics('unmute', getPlayerSnapshot());
+        }
+        if (unmuteOverlay) {
+            unmuteOverlay.classList.add('faded');
+        }
+    }
+
+    if (unmuteOverlay) {
+        unmuteOverlay.addEventListener('click', triggerUnmute);
+    }
+    if (btnUnmuteOverlay) {
+        btnUnmuteOverlay.addEventListener('click', (e) => {
+            e.stopPropagation();
+            triggerUnmute();
+        });
+    }
+
+    // Allow tapping on video pointer shields to also trigger unmute if muted
+    const shieldTop = document.querySelector('.yt-shield-top');
+    const shieldBottom = document.querySelector('.yt-shield-bottom-right');
+    if (shieldTop) {
+        shieldTop.addEventListener('click', () => {
+            if (player && typeof player.isMuted === 'function' && player.isMuted()) {
+                triggerUnmute();
             }
-            autoplayBanner.classList.add('hidden');
+        });
+    }
+    if (shieldBottom) {
+        shieldBottom.addEventListener('click', () => {
+            if (player && typeof player.isMuted === 'function' && player.isMuted()) {
+                triggerUnmute();
+            }
         });
     }
 
@@ -327,7 +357,6 @@
                 player.pauseVideo();
             } else {
                 player.playVideo();
-                if (autoplayBanner) autoplayBanner.classList.add('hidden');
             }
         });
     }
@@ -337,11 +366,7 @@
         btnCustomMute.addEventListener('click', () => {
             if (!player || typeof player.isMuted !== 'function') return;
             if (player.isMuted()) {
-                player.unMute();
-                btnCustomMute.textContent = '🔊 MUTE';
-                if (inputCustomVolume) inputCustomVolume.value = player.getVolume() || 100;
-                if (autoplayBanner) autoplayBanner.classList.add('hidden');
-                emitAnalytics('unmute', getPlayerSnapshot());
+                triggerUnmute();
             } else {
                 player.mute();
                 btnCustomMute.textContent = '🔇 UNMUTE';
