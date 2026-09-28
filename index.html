@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARI 2026 Live Player</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Supabase JS Client v2 -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Main Video & Subtitle Section -->
+        <main class="main-content">
+            <!-- 1. YouTube Player Area with Option B Custom Controls & Shields -->
+            <section class="player-section">
+                <div class="player-wrapper" id="player-wrapper">
+                    <div class="video-responsive">
+                        <div id="player"></div>
+                    </div>
+                    <!-- Option B Transparent Pointer Shields -->
+                    <div class="yt-shield-top" title="Live Player"></div>
+                    <div class="yt-shield-bottom-right" title="Live Player"></div>
+                    <!-- Autoplay Muted Warning Banner -->
+                    <div id="autoplay-banner" class="autoplay-banner hidden">
+                        <button id="btn-unmute-autoplay" class="btn-unmute-banner">
+                            🔊 Tap to Enable Audio
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Custom HTML5 Video Player Controls Bar -->
+                <div class="custom-player-controls" id="custom-player-controls">
+                    <div class="ctrl-group left">
+                        <button id="btn-custom-play" class="btn-ctrl" title="Play / Pause Video">
+                            ▶ PLAY
+                        </button>
+                        <button id="btn-custom-mute" class="btn-ctrl" title="Mute / Unmute Video">
+                            🔊 MUTE
+                        </button>
+                        <input type="range" id="input-custom-volume" min="0" max="100" value="100" class="ctrl-slider" title="Volume Slider">
+                    </div>
+
+                    <div class="ctrl-group center">
+                        <span id="badge-live-status" class="badge-live">🔴 LIVE</span>
+                        <span id="display-player-time" class="time-display">00:00</span>
+                    </div>
+
+                    <div class="ctrl-group right">
+                        <button id="btn-custom-fs" class="btn-ctrl" title="Toggle Fullscreen">
+                            ⛶
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. Subtitle Controls & Status Area -->
+            <section class="controls-section">
+                <div class="control-buttons-group">
+                    <button id="btn-toggle-subtitles" class="btn-mode active" title="Toggle Subtitles Overlay">
+                        <span class="btn-icon">👁️</span> SUBTITLES: <span id="subtitles-state-text">ON</span>
+                    </button>
+                    <button id="btn-tts" class="btn-tts" title="Toggle Speech Synthesis reading (mutes video audio)">
+                        <span class="btn-icon">🔊</span> READ: <span id="tts-state-text">OFF</span>
+                    </button>
+
+                    <!-- Dynamic AI Subtitle Disclaimer (Swaps EN/ES dynamically) -->
+                    <span id="ai-disclaimer" class="ai-disclaimer" title="AI Subtitles Notice">
+                        <span class="warning-icon">⚠️</span>
+                        <span id="ai-disclaimer-text">Los subtítulos generados por IA pueden contener imprecisiones o discordancias</span>
+                    </span>
+                </div>
+
+                <div class="language-status-group">
+                    <div class="language-selector-wrapper">
+                        <label for="select-language">Language:</label>
+                        <select id="select-language" class="language-dropdown">
+                            <option value="Spanish" selected>🇪🇸 Spanish (Español)</option>
+                            <option value="English">🇬🇧 English</option>
+                        </select>
+                    </div>
+                    <div class="status-indicator-wrapper">
+                        <span id="info-tag" class="info-tag badge-original">Original</span>
+                        <span id="waiting-tag" class="waiting-tag">Waiting ...</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. Subtitle Display Box (Clean 2-line display) -->
+            <section class="subtitle-section">
+                <div class="subtitle-box" id="subtitle-box">
+                    <div class="subtitle-text-wrapper">
+                        <div class="subtitle-text" id="subtitle-text">
+                            WAITING FOR LIVE SUBTITLES...
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- YouTube IFrame Player API -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <!-- Application Logic -->
+    <script src="script.js"></script>
+</body>
+</html>

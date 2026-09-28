@@ -1,0 +1,12 @@
+{
+  "name": "ari2026-web-client",
+  "version": "1.0.0",
+  "description": "ARI 2026 — LiveSpeech MLX TX Embedded Web Client Engine",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

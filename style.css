@@ -1,0 +1,503 @@
+/* ==============================================================================
+   ARI 2026 - Embedded Web Client Stylesheet
+   Strict Dark & Light Themes, Zero-Scroll Flex Layout, Glassmorphism Cards,
+   Uppercase Subtitle Box, Option B Player Controls & Dynamic AI Disclaimer.
+   ============================================================================== */
+
+/* --- Theme Tokens --- */
+:root, :root[data-theme="dark"] {
+    --bg-color: #0b1120;
+    --card-bg: rgba(22, 32, 51, 0.90);
+    --card-border: rgba(255, 255, 255, 0.1);
+    --text-primary: #f8fafc;
+    --text-secondary: #cbd5e1;
+    --text-muted: #94a3b8;
+    --accent-color: #38bdf8;
+    --accent-hover: #0284c7;
+    --badge-live-bg: #ef4444;
+    --badge-original-bg: #3b82f6;
+    --badge-translated-bg: #8b5cf6;
+    --subtitle-bg: rgba(11, 17, 32, 0.96);
+    --subtitle-border: rgba(56, 189, 248, 0.35);
+    --shadow-color: rgba(0, 0, 0, 0.45);
+    --control-bg: rgba(15, 23, 42, 0.85);
+    --disclaimer-bg: rgba(255, 255, 255, 0.05);
+    --disclaimer-border: rgba(255, 255, 255, 0.1);
+    --disclaimer-text: #94a3b8;
+}
+
+:root[data-theme="light"] {
+    --bg-color: #f8fafc;
+    --card-bg: rgba(255, 255, 255, 0.92);
+    --card-border: rgba(0, 0, 0, 0.1);
+    --text-primary: #0f172a;
+    --text-secondary: #334155;
+    --text-muted: #64748b;
+    --accent-color: #0284c7;
+    --accent-hover: #0369a1;
+    --badge-live-bg: #dc2626;
+    --badge-original-bg: #2563eb;
+    --badge-translated-bg: #7c3aed;
+    --subtitle-bg: rgba(248, 250, 252, 0.96);
+    --subtitle-border: rgba(2, 132, 199, 0.35);
+    --shadow-color: rgba(0, 0, 0, 0.08);
+    --control-bg: rgba(241, 245, 249, 0.9);
+    --disclaimer-bg: rgba(0, 0, 0, 0.04);
+    --disclaimer-border: rgba(0, 0, 0, 0.08);
+    --disclaimer-text: #64748b;
+}
+
+/* --- Global Reset & Base Layout --- */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    line-height: 1.4;
+    overflow: hidden;
+    width: 100%;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+.app-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100vh;
+    max-height: 100vh;
+    margin: 0 auto;
+    padding: 8px;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* --- 1. YouTube Player Section --- */
+.player-section {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px var(--shadow-color);
+    backdrop-filter: blur(12px);
+}
+
+.player-wrapper {
+    flex: 1;
+    min-height: 0;
+    position: relative;
+    width: 100%;
+    background: #000;
+}
+
+.video-responsive {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.video-responsive iframe,
+.video-responsive #player {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+/* Option B Pointer Event Shields */
+.yt-shield-top {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    z-index: 10;
+    background: transparent;
+    pointer-events: auto;
+}
+
+.yt-shield-bottom-right {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 160px;
+    height: 60px;
+    z-index: 10;
+    background: transparent;
+    pointer-events: auto;
+}
+
+/* Autoplay Muted Unlock Banner */
+.autoplay-banner {
+    position: absolute;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 25;
+    animation: fadeInBanner 0.3s ease-out;
+}
+
+@keyframes fadeInBanner {
+    from { opacity: 0; transform: translate(-50%, -10px); }
+    to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+.btn-unmute-banner {
+    background: rgba(15, 23, 42, 0.88);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.5);
+    padding: 7px 16px;
+    border-radius: 30px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    transition: all 0.2s ease;
+}
+
+.btn-unmute-banner:hover {
+    background: #38bdf8;
+    color: #0f172a;
+    transform: scale(1.03);
+}
+
+/* Custom HTML5 Video Player Controls Bar */
+.custom-player-controls {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 12px;
+    background: var(--control-bg);
+    border-top: 1px solid var(--card-border);
+    gap: 8px;
+}
+
+.ctrl-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-ctrl {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-primary);
+    border: 1px solid var(--card-border);
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.btn-ctrl:hover {
+    background: var(--accent-color);
+    color: #fff;
+}
+
+.ctrl-slider {
+    width: 75px;
+    accent-color: var(--accent-color);
+    cursor: pointer;
+}
+
+.badge-live {
+    background: var(--badge-live-bg);
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 12px;
+    text-transform: uppercase;
+}
+
+.time-display {
+    font-family: monospace;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+}
+
+/* --- 2. Subtitle Controls & Status Section --- */
+.controls-section {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 7px 12px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 2px 8px var(--shadow-color);
+    gap: 10px;
+}
+
+.control-buttons-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    flex: 1;
+    min-width: 0;
+}
+
+.btn-mode, .btn-tts {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 11px;
+    border-radius: 6px;
+    border: 1px solid var(--card-border);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.btn-mode.active {
+    background: var(--accent-color);
+    color: #fff;
+    border-color: var(--accent-hover);
+    box-shadow: 0 0 8px rgba(56, 189, 248, 0.3);
+}
+
+.btn-tts.active {
+    background: #10b981;
+    color: #fff;
+    border-color: #059669;
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.3);
+}
+
+/* Dynamic AI Subtitle Disclaimer */
+.ai-disclaimer {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.74rem;
+    color: var(--disclaimer-text);
+    font-style: italic;
+    line-height: 1.25;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: var(--disclaimer-bg);
+    border: 1px solid var(--disclaimer-border);
+    user-select: none;
+    transition: all 0.2s ease;
+}
+
+.ai-disclaimer .warning-icon {
+    font-style: normal;
+    font-size: 0.78rem;
+}
+
+.language-status-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.language-selector-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.language-selector-wrapper label {
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+.language-dropdown {
+    padding: 4px 8px;
+    border-radius: 6px;
+    background: var(--bg-color);
+    color: var(--text-primary);
+    border: 1px solid var(--card-border);
+    font-size: 0.78rem;
+    font-weight: 600;
+    outline: none;
+    cursor: pointer;
+}
+
+.status-indicator-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.info-tag {
+    font-size: 0.70rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+}
+
+.badge-original {
+    background: var(--badge-original-bg);
+    color: #fff;
+}
+
+.badge-translated {
+    background: var(--badge-translated-bg);
+    color: #fff;
+}
+
+.waiting-tag {
+    font-size: 0.70rem;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+/* --- 3. Subtitle Display Box (Clean 2-line display) --- */
+.subtitle-section {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.subtitle-box {
+    background: var(--subtitle-bg);
+    border: 1px solid var(--subtitle-border);
+    border-radius: 10px;
+    box-shadow: 0 4px 14px var(--shadow-color);
+    padding: 10px 18px;
+    height: 92px;
+    min-height: 92px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(16px);
+}
+
+.subtitle-text-wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.subtitle-text {
+    width: 100%;
+    text-align: center;
+    font-size: 1.45rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    line-height: 1.25;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+    word-break: break-word;
+}
+
+/* --- Fullscreen Enhancements --- */
+:fullscreen .app-container,
+:-webkit-full-screen .app-container {
+    padding: 0;
+    border-radius: 0;
+}
+
+:fullscreen .subtitle-box,
+:-webkit-full-screen .subtitle-box {
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    height: 110px;
+}
+
+:fullscreen .subtitle-text,
+:-webkit-full-screen .subtitle-text {
+    font-size: 1.85rem;
+}
+
+/* --- Responsive Adaptations --- */
+@media (max-width: 640px) {
+    .controls-section {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 6px;
+        padding: 8px 10px;
+    }
+
+    .control-buttons-group {
+        justify-content: space-between;
+    }
+
+    .ai-disclaimer {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+        font-size: 0.70rem;
+        margin-top: 2px;
+        order: 3;
+    }
+
+    .language-status-group {
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    .subtitle-box {
+        height: 78px;
+        min-height: 78px;
+        padding: 6px 10px;
+    }
+
+    .subtitle-text {
+        font-size: 1.15rem;
+    }
+
+    .custom-player-controls {
+        padding: 4px 8px;
+    }
+
+    .ctrl-slider {
+        width: 55px;
+    }
+}
