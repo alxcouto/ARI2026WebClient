@@ -422,6 +422,10 @@
     function updateFullscreenButtonIcon() {
         if (!btnCustomFs) return;
         const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+        const container = document.querySelector('.app-container');
+        if (container) {
+            container.classList.toggle('is-fullscreen', isFs);
+        }
         btnCustomFs.textContent = isFs ? '🗗' : '⛶';
         btnCustomFs.title = isFs ? 'Exit Fullscreen' : 'Toggle Fullscreen';
         emitAnalytics(isFs ? 'fullscreen_enter' : 'fullscreen_exit', getPlayerSnapshot());
